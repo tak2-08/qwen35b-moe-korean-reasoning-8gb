@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+# large / private artifacts (never committed)
+*.gguf
+*.pt
+*.safetensors
+data/
+results/

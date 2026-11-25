@@ -1,0 +1,5 @@
+# Install PyTorch with CUDA separately first: https://pytorch.org/get-started/locally/
+torch>=2.3
+numpy>=1.26
+gguf>=0.10
+requests>=2.31
