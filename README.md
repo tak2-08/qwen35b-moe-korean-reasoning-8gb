@@ -8,6 +8,8 @@ Fine-tuning a 35B Mixture-of-Experts model (Qwen3.6-35B-A3B, IQ3_S) for Korean s
 
 **Full technical report (Korean, with English summary): [REPORT.md](REPORT.md)**
 
+**Research log (8 step-by-step reports, Korean): [research/](research/README.md)**
+
 ## Key results (held-out newest exam year, never trained)
 
 | | Base | Adopted adapter |

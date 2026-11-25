@@ -6,6 +6,8 @@
 
 **전체 기술 보고서: [REPORT.md](REPORT.md)**
 
+**단계별 연구 기록 8편: [research/](research/README.md)**
+
 ## 주요 결과 (학습에 쓰지 않은 최신 연도 시험)
 
 | | 기본 모델 | 채택 어댑터 |
