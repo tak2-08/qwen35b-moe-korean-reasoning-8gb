@@ -1,4 +1,6 @@
-# 3차 연구: 한국어 지식 보강 + "해마 기억" 새 구조
+# 3편. 한국어 지식 붙이기와 "해마 기억"
+
+> 모델이 돌아가긴 하는데 한국 이야기는 잘 몰랐다. 그래서 로컬 검색을 붙였고, 내친김에 뇌의 해마처럼 '한 번 보고 기억하는' 구조도 시제품으로 만들어 봤다.
 
 작성: 2026-11-22 · 대상 PC: RTX 3070 8GB / RAM 16GB / Ryzen 5 5600X · 기반 모델: Qwen3.6-35B-A3B (IQ3_S)
 
@@ -112,3 +114,7 @@
 - Lin et al., "Continual Learning via Sparse Memory Finetuning" (2025): https://arxiv.org/abs/2510.15103
 - 한국어 위키백과 덤프: https://dumps.wikimedia.org/kowiki/
 - HAE-RAE / KMMLU / CSAT-QA: https://huggingface.co/HAERAE-HUB · KorMedMCQA: https://huggingface.co/datasets/sean0042/KorMedMCQA · 공무원 시험: https://huggingface.co/kikikara · 수능 국어 2025: https://huggingface.co/datasets/KKACHI-HUB/CSAT-KOREAN-2025
+
+---
+
+[← 연구 기록 모음으로](README.md)

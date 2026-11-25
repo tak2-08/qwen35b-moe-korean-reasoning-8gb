@@ -1,4 +1,6 @@
-# MoE 3단(VRAM-RAM-SSD) 실행 연구 보고서 — 1차
+# 1편. 큰 MoE를 VRAM·RAM·SSD에 나눠 돌려 보기
+
+> 8GB 그래픽카드에 안 들어가는 모델을 어떻게든 돌려 보고 싶었다. MoE 모델은 토큰마다 전문가 일부만 쓰니까, 전문가를 GPU·RAM·SSD 세 층에 나눠 담으면 되지 않을까? 그 생각을 실제로 재 본 기록이다.
 
 작성: 2026-11-22 · 실험 환경: 이 PC (RTX 3070 8GB / RAM 16GB / Ryzen 5 5600X / NVMe SSD)
 
@@ -119,3 +121,7 @@ GLM-5.3-Flash 구조: MoE 42층 × 전문가 288개 중 8개 선택. 전문가 1
 ## 7. 파일 위치
 - 원본 결과: `results/` (glm_report.json, glm_cacheaware_ko.json, glm_cacheaware_en.json, granite_*.json)
 - 스크립트: `scripts/`
+
+---
+
+[← 연구 기록 모음으로](README.md)

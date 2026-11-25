@@ -1,4 +1,6 @@
-# 4차 연구: 사람처럼 배우고, 사람처럼 효율적으로 생각하기
+# 4편. 한 번 듣고 배우고, 짧게 생각하기
+
+> 사람은 한 번 들은 걸 기억하고, 쉬운 문제는 오래 고민하지 않는다. 이 두 가지를 이 컴퓨터의 모델에게 시켜 보면 어떨까 싶어서 해 본 실험들이다.
 
 작성: 2026-11-22 · RTX 3070 8GB / RAM 16GB · Qwen3.6-35B-A3B (IQ3_S)
 
@@ -100,3 +102,7 @@
 - ESFT, 전문가 특화 미세조정 (Wang et al., 2024): https://arxiv.org/abs/2407.01906
 - Sparse Memory Finetuning (Lin et al., 2025): https://arxiv.org/abs/2510.15103
 - 해마형 기억·재생 정착 LLM 연구: TRC2 https://arxiv.org/abs/2602.22479 · HiCL https://arxiv.org/abs/2508.16651
+
+---
+
+[← 연구 기록 모음으로](README.md)

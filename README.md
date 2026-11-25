@@ -1,57 +1,59 @@
-# Qwen3.6-35B-A3B Korean Reasoning on 8GB
+# I fine-tuned a 35B model on an 8 GB GPU
 
 **English** | [한국어](README.ko.md)
 
-Fine-tuning a 35B Mixture-of-Experts model (Qwen3.6-35B-A3B, IQ3_S) for Korean step-by-step exam reasoning on a single consumer PC: RTX 3070 8 GB, 16 GB RAM, Ryzen 5 5600X.
+> A personal research log: adding a LoRA to Qwen3.6-35B-A3B (MoE) so it solves Korean exam questions step by step, better and shorter.
 
-8GB GPU 한 장과 RAM 16GB로 35B MoE 모델에 LoRA를 학습해, 한국어 객관식 시험 문제의 단계별 풀이 능력을 높인 기록입니다.
+## How it started
 
-**Full technical report (Korean, with English summary): [REPORT.md](REPORT.md)**
+My PC is ordinary: RTX 3070 8 GB, 16 GB RAM, Ryzen 5 5600X. Plenty of people *run* 35B models on hardware like this. I wanted to know the next thing: **can this PC actually train one?**
 
-**Research log (8 step-by-step reports, Korean): [research/](research/README.md)**
+Not the usual way. Even at 3 bits the model is 12.7 GB, so it never fits on the GPU, and standard training stacks can't even load it. So I looked for a way around.
 
-## Key results (held-out newest exam year, never trained)
+## Results first
 
-| | Base | Adopted adapter |
+Measured on the newest exam year, which was never used for training.
+
+| | Base | My adapter |
 |---|---|---|
 | Step-by-step accuracy (120 items, ≤ 2000 tokens) | 52.5% | **63.3%** (paired p = 0.041) |
 | Average answer length | 1,388 tokens | **524 tokens** |
 | Direct answer, no reasoning (1,416 items) | **62.8%** | 60.5% |
 | Korean benchmark mix (KMMLU, HAE-RAE, CSAT Korean 2025, civil service; 925 items) | **62.7%** | 61.6% |
-| Same top-1 next token as the original model on held-out Wikipedia text | 100% | 92.4% |
+| Same top-1 next token as the base model on held-out Wikipedia text | 100% | 92.4% |
 
-The adapter helps when the model solves step by step, and costs a little when it must answer at once. The chat app therefore enables it only for multiple-choice exam questions.
+In one line: **more right answers in a third of the length.** It isn't free. Direct answers got a little worse, and general knowledge dropped about 1 point. So my chat app turns the adapter on only for multiple-choice exam questions.
 
 ## How it fits in 8 GB
 
-- **Frozen-routed-expert surrogate**
-  - The real llama.cpp engine records every routed-expert output.
-  - A PyTorch re-implementation of the remaining layers (attention, Gated DeltaNet, norms, shared expert) uses those outputs as constants.
-  - This gives exact gradients through all layers above the edit. The 12 GB of expert weights never enters GPU memory.
-- **GPU / RAM / SSD tiers**
-  - Activations are captured to SSD in chunks of about 460k tokens, about 70 GB each.
-  - Each chunk is trained for one epoch, then the capture is deleted.
-- **Chunked Gated DeltaNet**
-  - A 64-token WY/UT-transform form of the gated delta rule matches the reference within 1e-6.
-  - It made training about 40× faster.
-- **Forgetting control**
-  - KL replay on background text (weight 12).
-  - A hard real-engine gate of at least 92% next-token agreement.
-  - The checkpoint after 3 of 5 chunks was adopted. The final one fell to 91.3% and was rejected.
+**1. Record the experts, don't train them.** Most of an MoE's weight sits in its routed experts. Instead of loading them onto the GPU, I let the real engine (llama.cpp) run as usual and record every expert output. A PyTorch rewrite of the rest (attention, Gated DeltaNet, norms, shared expert) plugs those outputs in as constants. The 12 GB of expert weights never touches the GPU, and the gradients are still exact.
 
-## Repository contents
+**2. Split the work across GPU, RAM and SSD.** The recorded activations are about 125 KB per token, roughly 70 GB per 460k-token chunk. Each chunk goes to SSD, gets trained for one epoch, then gets deleted.
 
-- `src/`: training and evaluation pipeline (see the code map in REPORT.md §7).
-- `REPORT.md`: method, all measurements, limitations.
-- Not included: model weights, the adapter, training data, and the data-collection process.
-  - Training data: about 2,900 private Korean step-by-step (CoT) solutions, synthesized with multiple teacher LLMs and filtered by automatic answer matching and repetition-loop filtering.
+**3. A 40× speedup from one fix.** Computing Gated DeltaNet token by token made one epoch take 3.6 hours. A 64-token chunked form (WY/UT transform) brought it to 7 minutes, matching the reference within 1e-6.
 
-## Requirements
+**4. Keep it from forgetting.** A strong KL penalty (weight 12) keeps the model close to the original on ordinary text. Every checkpoint must also pass a gate: at least 92% top-1 next-token agreement with the base model on Wikipedia. The final checkpoint fell to 91.3% and was rejected. I kept the one after 3 of 5 chunks.
 
-- llama.cpp (Windows CUDA build) for `llama-server` and for building `src/hm_host.cpp` against `llama.h`.
-- Python 3.11+, PyTorch with CUDA, `numpy`, `gguf`, `requests`.
-- Paths are set with environment variables: `MODEL`, `ENGINE`, `HM_DATA`, `EXAM_DATA`, `RESULTS`, `LAB`.
+## The road here
+
+Training wasn't the plan at first. It started with just getting a big model to run on this PC, then adding knowledge, then making it remember things from one mention, and finally touching the weights. I wrote it up as 8 posts (in Korean): **→ [research log](research/README.md)**
+
+The full technical report (method, every measurement, limitations) is in **[REPORT.md](REPORT.md)**.
+
+## What's here and what isn't
+
+- `src/`: training and evaluation pipeline (code map in REPORT.md §7)
+- `REPORT.md`: technical report
+- `research/`: 8 step-by-step research posts
+- **Not included:** model weights, the adapter, training data, and how the data was collected
+  - Training data: about 2,900 private Korean step-by-step solutions made with several teacher LLMs, filtered by automatic answer matching and repetition-loop filtering.
+
+## Running it yourself
+
+- llama.cpp (Windows CUDA build) for `llama-server`, and to build `src/hm_host.cpp` against `llama.h`
+- Python 3.11+, PyTorch with CUDA, `numpy`, `gguf`, `requests`
+- Paths come from environment variables: `MODEL`, `ENGINE`, `HM_DATA`, `EXAM_DATA`, `RESULTS`, `LAB`
 
 ## License
 
-CC BY-NC 4.0: non-commercial research and educational use only. See [LICENSE](LICENSE). The base model and llama.cpp keep their own licenses.
+CC BY-NC 4.0: non-commercial research and education only. See [LICENSE](LICENSE). The base model and llama.cpp keep their own licenses.

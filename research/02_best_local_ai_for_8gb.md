@@ -1,4 +1,6 @@
-# 2차 연구: 이 PC에 가장 알맞은 로컬 AI 찾기 + 설치
+# 2편. 이 컴퓨터에 제일 잘 맞는 로컬 AI 찾기
+
+> 1편에서 '돌릴 수는 있다'는 걸 확인했으니, 이번엔 '무엇을 돌릴까'를 골랐다. 큰 파일부터 받는 대신 공개된 벤치마크를 먼저 찾아보고, 후보를 좁힌 다음에만 받아서 쟀다.
 
 작성: 2026-11-22 · 대상 PC: RTX 3070 8GB / RAM 16GB / Ryzen 5 5600X
 
@@ -77,3 +79,7 @@
 - RTX 3070 8GB 실측 보고: https://www.xda-developers.com/i-stopped-thinking-my-8gb-gpu-was-too-small-after-learning-to-offload-moe-llm-layers-to-ram/ · https://note.com/ripe_hosta6920/n/nb81b72d54ad7?hl=en
 - llama.cpp MTP: https://github.com/ggml-org/llama.cpp/pull/22673
 - Unsloth 양자화 벤치마크: https://unsloth.ai/docs/models/qwen3.5/gguf-benchmarks
+
+---
+
+[← 연구 기록 모음으로](README.md)

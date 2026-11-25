@@ -1,4 +1,6 @@
-# 5차 연구: 모델 자체(중간 층 가중치)를 이 PC에서 학습시키기
+# 5편. 모델 중간 층을 직접 학습시키기
+
+> 4편에서는 마지막 층 하나만 고칠 수 있었고, 그러면 배우는 만큼 잊어버렸다. 이번엔 한 발 더 들어가서 모델 중간 층의 가중치를 8GB 안에서 학습하는 길을 뚫어 봤다.
 
 작성: 2026-11-23 · RTX 3070 8GB / RAM 16GB · Qwen3.6-35B-A3B (IQ3_S)
 
@@ -118,3 +120,7 @@
 - Direct Feedback Alignment (Nøkland, 2016): https://arxiv.org/abs/1609.01596
 - 시험 효과 (Roediger & Karpicke, 2006): https://doi.org/10.1111/j.1467-9280.2006.01693.x
 - KMMLU: https://huggingface.co/datasets/HAERAE-HUB/KMMLU · 위키낱말사전: https://ko.wiktionary.org
+
+---
+
+[← 연구 기록 모음으로](README.md)
