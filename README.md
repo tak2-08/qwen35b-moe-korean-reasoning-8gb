@@ -90,13 +90,13 @@ Every benchmark dropped slightly except Korean reading, which went up. The adapt
 |---|---|---|
 | Standard LoRA (16-bit, PEFT) | ~70 GB of weights | ✘ can't even load |
 | QLoRA (4-bit) | ~18 GB of weights (estimate) | ✘ |
-| **This repo** | ~6–7 GB VRAM, ~70 GB SSD per chunk | **✔** |
+| **This repo** | ~6 - 7 GB VRAM, ~70 GB SSD per chunk | **✔** |
 
 | | Value |
 |---|---|
 | Training time | ~37 min per chunk (record 23 + train 14); the adopted checkpoint is 3 chunks, about 2 hours |
 | Gated DeltaNet speedup | 3.6 h → 7 min per epoch (~40×), within 1e-6 of the reference |
-| Chat speed with the adapter | ~52–55 tokens/s (VRAM ~7.7 GB, engine RAM ~8.5–9 GB) |
+| Chat speed with the adapter | ~52 - 55 tokens/s (VRAM ~7.7 GB, engine RAM ~8.5 - 9 GB) |
 | Expert-cache tuning (no adapter) | 38 → 59.5 tokens/s (llama.cpp's built-in cache; I only tuned its settings) |
 
 ## How it fits in 8 GB
