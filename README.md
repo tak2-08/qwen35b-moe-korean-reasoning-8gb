@@ -1,4 +1,5 @@
 # Qwen3.6-35B-A3B Korean Reasoning on 8GB
+n**English** | [한국어](README.ko.md)
 
 Fine-tuning a 35B Mixture-of-Experts model (Qwen3.6-35B-A3B, IQ3_S) for Korean step-by-step exam reasoning on a single consumer PC: RTX 3070 8 GB, 16 GB RAM, Ryzen 5 5600X.
 
