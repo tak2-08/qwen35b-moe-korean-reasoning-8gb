@@ -56,8 +56,12 @@ MoE 모델 무게의 대부분은 "전문가(routed expert)"들이다. 이걸 GP
 ## 직접 돌려 보려면
 
 - llama.cpp (Windows CUDA 빌드): `llama-server`, 그리고 `llama.h`로 `src/hm_host.cpp` 빌드
-- Python 3.11 이상, CUDA PyTorch, `numpy`, `gguf`, `requests`
+- Python 3.11 이상, CUDA PyTorch 설치 후 `pip install -r requirements.txt`
 - 경로는 환경 변수로 지정: `MODEL`, `ENGINE`, `HM_DATA`, `EXAM_DATA`, `RESULTS`, `LAB`
+
+## 인용
+
+[CITATION.cff](CITATION.cff) 참고 (GitHub의 "Cite this repository" 버튼).
 
 ## 라이선스
 

@@ -2,21 +2,21 @@
 
 > 엔비디아 그래픽카드를 쓰니까, 엔비디아가 직접 만든 로컬 AI 도구가 더 낫지 않을까? 설치하기 전에 하나씩 조사해서 지금 구성과 비교해 봤다.
 
-작성: 2026-11-22 · 대상 PC: RTX 3070 8GB(Ampere) / RAM 16GB / Ryzen 5 5600X / Windows 11 · 비교 기준: llama.cpp b12606(CUDA) 내장 웹 UI + Qwen3.6-35B-A3B UD-IQ3_S(12.7GB), 실측 생성 35~37 tok/s, 첫 답변까지 약 1.3초, 질문 읽기 약 360 tok/s
+작성: 2026-11-22 · 대상 PC: RTX 3070 8GB(Ampere) / RAM 16GB / Ryzen 5 5600X / Windows 11 · 비교 기준: llama.cpp b12606(CUDA) 내장 웹 UI + Qwen3.6-35B-A3B UD-IQ3_S(12.7GB), 실측 생성 35 - 37 tok/s, 첫 답변까지 약 1.3초, 질문 읽기 약 360 tok/s
 
-**결론부터 말하면, 2026년 11월 기준 엔비디아가 직접 내놓은 로컬 AI 도구 가운데 이 PC에서 지금 구성보다 속도, 정확도, 지식을 확실히 올려 주는 것은 없다.** 앱 쪽을 보면 ChatRTX는 2026년 1월에 개발이 끝났고, G-Assist는 대화형 AI가 아니라 PC 조작 도우미이다. AI Workbench는 WSL2(Windows 안에서 리눅스를 돌리는 기능)와 Docker를 설치하는 개발자 도구이다. 엔진 쪽(TensorRT-LLM, TensorRT for RTX, Edge-LLM, NIM, Dynamo)은 모두 모델 전체를 그래픽카드 메모리(VRAM)에 올려야 한다. 그런데 4비트로 줄여도 18~20GB인 35B 모델은 8GB에 들어가지 않는다. 지금 속도의 비결인 "전문가(MoE 모델의 부분 신경망) 일부를 CPU에서 계산하는" 기능도 이 엔진들에는 없다. 엔비디아 자체 모델인 Nemotron 가운데 이 PC에 들어가는 크기는 Qwen3.6-35B-A3B보다 약하고, 더 똑똑한 Bolt 74B는 너무 크다. 엔비디아가 2026년에 공개한 속도 개선은 대부분 llama.cpp 본체에 직접 들어갔고, 지금 쓰는 b12606에 이미 포함돼 있다. 그래서 남은 일은 시스템을 건드리지 않는 실행 옵션 몇 가지를 선택적으로 시험해 보는 것뿐이다. 드라이버 설정은 속도를 올려 주지 않는다.
+**결론부터 말하면, 2026년 11월 기준 엔비디아가 직접 내놓은 로컬 AI 도구 가운데 이 PC에서 지금 구성보다 속도, 정확도, 지식을 확실히 올려 주는 것은 없다.** 앱 쪽을 보면 ChatRTX는 2026년 1월에 개발이 끝났고, G-Assist는 대화형 AI가 아니라 PC 조작 도우미이다. AI Workbench는 WSL2(Windows 안에서 리눅스를 돌리는 기능)와 Docker를 설치하는 개발자 도구이다. 엔진 쪽(TensorRT-LLM, TensorRT for RTX, Edge-LLM, NIM, Dynamo)은 모두 모델 전체를 그래픽카드 메모리(VRAM)에 올려야 한다. 그런데 4비트로 줄여도 18 - 20GB인 35B 모델은 8GB에 들어가지 않는다. 지금 속도의 비결인 "전문가(MoE 모델의 부분 신경망) 일부를 CPU에서 계산하는" 기능도 이 엔진들에는 없다. 엔비디아 자체 모델인 Nemotron 가운데 이 PC에 들어가는 크기는 Qwen3.6-35B-A3B보다 약하고, 더 똑똑한 Bolt 74B는 너무 크다. 엔비디아가 2026년에 공개한 속도 개선은 대부분 llama.cpp 본체에 직접 들어갔고, 지금 쓰는 b12606에 이미 포함돼 있다. 그래서 남은 일은 시스템을 건드리지 않는 실행 옵션 몇 가지를 선택적으로 시험해 보는 것뿐이다. 드라이버 설정은 속도를 올려 주지 않는다.
 
 ## 엔비디아 앱 세 가지는 끝났거나, 용도가 다르거나, 너무 무겁다
 
 **ChatRTX는 2026년 1월 21일 공식 종료됐다.** GitHub 저장소 안내문에 "더 이상 유지보수하지 않는다"고 적혀 있고, 저장소는 읽기 전용으로 보관 처리됐다 ([GitHub NVIDIA/ChatRTX](https://github.com/NVIDIA/ChatRTX)). 개발자 포럼도 같은 공지와 함께 잠겼고, 후속 제품은 따로 안내하지 않았다 ([NVIDIA Developer Forums](https://forums.developer.nvidia.com/t/chatrtx-has-been-deprecated-this-forum-is-locked/365743)). 종료되기 전에도 RTX 30 시리즈 8GB 카드에서 고를 수 있는 모델은 Mistral 7B, ChatGLM3 6B 같은 7B급뿐이었다. Llama 3.1 8B NIM은 RTX 4080 이상에서만 지원됐다 ([GitHub NVIDIA/ChatRTX](https://github.com/NVIDIA/ChatRTX)). 내 문서를 읽고 답하는 RAG 기능이 장점이었지만, 이제는 보안 업데이트가 없는 데다 설치할 때 외부 오픈소스 패키지까지 추가로 내려받는다. 지금 쓰기에는 안전 면에서 손해이다.
 
-**G-Assist는 이 PC에서 돌아가기는 하지만 채팅 AI가 아니다.** 공식 페이지는 6GB 이상 VRAM과 드라이버 580.97 이상을 요구하고, 스스로 "폭넓은 대화형 AI가 아니다"라고 밝힌다. 게임 설정 최적화, 오버클럭 적용, 하드웨어 상태 그래프, 주변기기 제어가 주 기능이고, 영어만 지원한다 ([NVIDIA G-Assist](https://www.nvidia.com/en-us/software/nvidia-app/g-assist/)). 실행 중에는 VRAM이 4.5~6GB 비어 있어야 해서, 7.3GB를 쓰는 지금의 llama.cpp와 동시에 켤 수 없다. 안에 든 모델이 Llama 8B인지 Qwen 4B인지는 자료마다 다르다 ([Jon Peddie Research](https://www.jonpeddie.com/news/rtx-goes-local-cloud-and-cinematic-as-nvidia-deepens-its-ai-stack/)). 어느 쪽이든 35B급인 지금 모델보다 훨씬 작다. 오버클럭 기능이 있다는 점도 "PC 손상 금지" 원칙과 맞지 않는다.
+**G-Assist는 이 PC에서 돌아가기는 하지만 채팅 AI가 아니다.** 공식 페이지는 6GB 이상 VRAM과 드라이버 580.97 이상을 요구하고, 스스로 "폭넓은 대화형 AI가 아니다"라고 밝힌다. 게임 설정 최적화, 오버클럭 적용, 하드웨어 상태 그래프, 주변기기 제어가 주 기능이고, 영어만 지원한다 ([NVIDIA G-Assist](https://www.nvidia.com/en-us/software/nvidia-app/g-assist/)). 실행 중에는 VRAM이 4.5 - 6GB 비어 있어야 해서, 7.3GB를 쓰는 지금의 llama.cpp와 동시에 켤 수 없다. 안에 든 모델이 Llama 8B인지 Qwen 4B인지는 자료마다 다르다 ([Jon Peddie Research](https://www.jonpeddie.com/news/rtx-goes-local-cloud-and-cinematic-as-nvidia-deepens-its-ai-stack/)). 어느 쪽이든 35B급인 지금 모델보다 훨씬 작다. 오버클럭 기능이 있다는 점도 "PC 손상 금지" 원칙과 맞지 않는다.
 
 **AI Workbench는 2026년 8월에도 새 버전이 나오는 현역 도구지만, 개발자용 컨테이너 관리 도구이다.** Windows에서는 WSL2를 켜고 전용 리눅스 배포판을 만들며, Docker Desktop 설정을 확인하고 재부팅을 요구할 수 있다 ([AI Workbench 설치 문서](https://docs.nvidia.com/ai-workbench/user-guide/latest/installation/windows.html); [릴리스 노트](https://docs.nvidia.com/ai-workbench/release-notes/2026/8/5)). 관리자 권한이 필요한 시스템 변경이고, Windows 11 25H2에서 설치가 실패했다는 사용자 보고도 있다 ([NVIDIA Forums](https://forums.developer.nvidia.com/t/nvidia-workbench-install-failed-on-download-of-wsl-distro/351756)). 2026년 CES와 Computex 발표에서도 ChatRTX를 대신할 엔비디아 자체 채팅 앱은 나오지 않았다. 엔비디아는 LM Studio, Ollama, AnythingLLM 같은 외부 앱과 llama.cpp 개선을 안내하는 쪽으로 방향을 바꿨다 ([NVIDIA Blog, Computex 2026](https://blogs.nvidia.com/blog/rtx-ai-garage-computex-spark-local-agents); [NVIDIA AI on RTX](https://www.nvidia.com/en-us/ai-on-rtx/chatrtx/)). 이 외부 앱들도 속은 llama.cpp라서, 최신 llama.cpp를 직접 쓰는 지금보다 빨라질 이유가 없다.
 
 ## 엔비디아 추론 엔진은 35B 모델을 8GB에 넣지 못한다
 
-추론 엔진은 모델을 실제로 계산하는 프로그램이다. 엔비디아 엔진들이 이 PC에서 막히는 이유는 세 가지이다. **첫째, 모델 전체(와 여유분)가 VRAM에 들어가야 한다.** **둘째, MoE 전문가를 시스템 RAM에 두고 CPU로 계산하는 기능(llama.cpp의 `--n-cpu-moe`)이 없다.** **셋째, 4비트보다 작게 줄이는 형식이 없다.** 지금 쓰는 IQ3_S(약 3.4비트)가 12.7GB인데, 같은 모델을 4비트(INT4)로 만들면 18~20GB이다. 이 값은 매개변수 수로 계산한 추정이다.
+추론 엔진은 모델을 실제로 계산하는 프로그램이다. 엔비디아 엔진들이 이 PC에서 막히는 이유는 세 가지이다. **첫째, 모델 전체(와 여유분)가 VRAM에 들어가야 한다.** **둘째, MoE 전문가를 시스템 RAM에 두고 CPU로 계산하는 기능(llama.cpp의 `--n-cpu-moe`)이 없다.** **셋째, 4비트보다 작게 줄이는 형식이 없다.** 지금 쓰는 IQ3_S(약 3.4비트)가 12.7GB인데, 같은 모델을 4비트(INT4)로 만들면 18 - 20GB이다. 이 값은 매개변수 수로 계산한 추정이다.
 
 | 엔진 | Windows에서 쓰는 방법 | 이 PC에서의 문제 | 시스템 변경 | 판단 |
 |---|---|---|---|---|
@@ -50,22 +50,22 @@ TensorRT for RTX의 가중치 스트리밍은 그나마 "VRAM보다 큰 모델"�
 
 엔비디아가 홍보한 MTP 예측 디코딩(여러 토큰을 미리 짐작해 한 번에 확인하는 기능)도 마찬가지이다. Qwen3.6-35B에서 최대 1.6배라는 수치는 모델이 VRAM에 통째로 들어가는 RTX 5090에서 잰 것이다 ([NVIDIA Blog, Computex 2026](https://blogs.nvidia.com/blog/rtx-ai-garage-computex-spark-local-agents)). 이 PC에서는 이미 직접 재 봤고, **24.5에서 21.5 tok/s로 오히려 느려졌다**(IQ4_XS 파일 기준). 전문가를 CPU가 계산하는 구성에서는 확인할 토큰이 늘수록 CPU 일이 늘기 때문이다. 모델을 RAM에 통째로 올리는 `-lm none`도 이미 시험했다. 시스템 메모리 예약(commit charge)이 29.9GB로 한도 23.2GB를 넘어서 쓰지 않기로 했다.
 
-GPU 전문가 캐시 옵션 `--moe-cache-mib`는 RAM에 있는 전문가 중 자주 쓰는 것을 GPU에 복사해 두는 기능이다. 2026년 10월에 정식으로 들어갔고, 개발자는 RTX 4090/5090에서 1.6~2.2배를 보고했다. 반면 RTX 3090에서는 잘 맞춘 `--n-cpu-moe` 대비 1~5% 향상에 그쳤다는 보고가 있다 ([GitHub PR #29887](https://github.com/ggml-org/llama.cpp/pull/29887); [developersdigest](https://www.developersdigest.tech/blog/llama-cpp-moe-offload-n-cpu-moe-vs-moe-cache-2026)). 8GB 카드에서 같은 Qwen3.6-35B-A3B로 1.72배를 냈다는 기록도 있지만, 이것은 정식 채택되지 않고 닫힌 다른 구현이다 ([GitHub PR #26563](https://github.com/ggml-org/llama.cpp/pull/26563)). 무엇보다 **이 PC의 1차 실험(GLM-4.7-Flash)에서 이 캐시를 켜자 8.2~9.0에서 5.7~6.5 tok/s로 오히려 느려졌다.** 캐시에 없는 전문가를 그때그때 PCIe로 올리는 비용이 컸기 때문이다. 8GB에서는 캐시에 VRAM을 주는 만큼 GPU에 고정해 둘 전문가 층을 빼야 한다는 문제도 있다. Windows에서는 mmap 방식(파일을 필요할 때 읽는 방식)과 함께 쓸 때 추가 비용이 생긴다는 보고도 있다 ([GitHub PR #29887](https://github.com/ggml-org/llama.cpp/pull/29887)). Qwen3.6 IQ3_S로는 아직 재 보지 않았으니 다시 시험할 수는 있지만, **우선순위는 낮고 효과도 보장되지 않는다.**
+GPU 전문가 캐시 옵션 `--moe-cache-mib`는 RAM에 있는 전문가 중 자주 쓰는 것을 GPU에 복사해 두는 기능이다. 2026년 10월에 정식으로 들어갔고, 개발자는 RTX 4090/5090에서 1.6 - 2.2배를 보고했다. 반면 RTX 3090에서는 잘 맞춘 `--n-cpu-moe` 대비 1 - 5% 향상에 그쳤다는 보고가 있다 ([GitHub PR #29887](https://github.com/ggml-org/llama.cpp/pull/29887); [developersdigest](https://www.developersdigest.tech/blog/llama-cpp-moe-offload-n-cpu-moe-vs-moe-cache-2026)). 8GB 카드에서 같은 Qwen3.6-35B-A3B로 1.72배를 냈다는 기록도 있지만, 이것은 정식 채택되지 않고 닫힌 다른 구현이다 ([GitHub PR #26563](https://github.com/ggml-org/llama.cpp/pull/26563)). 무엇보다 **이 PC의 1차 실험(GLM-4.7-Flash)에서 이 캐시를 켜자 8.2 - 9.0에서 5.7 - 6.5 tok/s로 오히려 느려졌다.** 캐시에 없는 전문가를 그때그때 PCIe로 올리는 비용이 컸기 때문이다. 8GB에서는 캐시에 VRAM을 주는 만큼 GPU에 고정해 둘 전문가 층을 빼야 한다는 문제도 있다. Windows에서는 mmap 방식(파일을 필요할 때 읽는 방식)과 함께 쓸 때 추가 비용이 생긴다는 보고도 있다 ([GitHub PR #29887](https://github.com/ggml-org/llama.cpp/pull/29887)). Qwen3.6 IQ3_S로는 아직 재 보지 않았으니 다시 시험할 수는 있지만, **우선순위는 낮고 효과도 보장되지 않는다.**
 
-아래 표는 남은 선택지를 위험도와 시스템 변경 여부로 정리한 것이다. 1~5번은 모두 실행할 때 붙이는 옵션이라, 지우기만 하면 원래대로 돌아간다.
+아래 표는 남은 선택지를 위험도와 시스템 변경 여부로 정리한 것이다. 1 - 5번은 모두 실행할 때 붙이는 옵션이라, 지우기만 하면 원래대로 돌아간다.
 
 | # | 변경 | 기대 효과 | 위험 | 시스템/드라이버 설정 변경 | 되돌리기 |
 |---|---|---|---|---|---|
 | 1 | `-ub 2048`(질문을 읽는 단위를 키움) | 긴 질문을 읽는 속도가 오를 수 있음. 대신 VRAM을 더 써서 전문가 층을 1개 빼야 할 수 있음 ([HF 오프로드 가이드](https://huggingface.co/blog/Doctor-Shotgun/llamacpp-moe-offload-guide)) | 매우 낮음(최악이면 메모리 부족으로 실행 실패) | 없음 | 옵션 삭제 |
 | 2 | `--backend-sampling`(다음 단어 고르기를 GPU에서) | 엔비디아 측정 조건에 포함된 옵션. 효과는 작을 것으로 예상 ([NVIDIA CES 2026](https://developer.nvidia.com/blog/open-source-ai-tool-upgrades-speed-up-llm-and-diffusion-models-on-nvidia-rtx-pcs)) | 매우 낮음 | 없음 | 옵션 삭제 |
 | 3 | `GGML_CUDA_GRAPH_OPT=1`(실행 창 안에서만 쓰는 환경 변수) | 거의 없을 것으로 예상. CUDA Graphs가 켜져 있어야 작동하는데, `--n-cpu-moe`를 쓰면 CUDA Graphs가 꺼짐 ([PR #18496](https://github.com/ggml-org/llama.cpp/pull/18496); [PR #18593](https://github.com/ggml-org/llama.cpp/pull/18593)) | 매우 낮음(오류가 나도 해당 프로그램만 종료) | 없음(그 창에만 적용) | 창 닫기 |
-| 4 | `--moe-cache-mib 256~1024` + `--n-cpu-moe` 27~30 | 불확실. 이 PC의 1차 실험에서는 느려졌음 | 매우 낮음 | 없음 | 옵션 삭제 |
+| 4 | `--moe-cache-mib 256 - 1024` + `--n-cpu-moe` 27 - 30 | 불확실. 이 PC의 1차 실험에서는 느려졌음 | 매우 낮음 | 없음 | 옵션 삭제 |
 | 5 | `-ot`로 전문가 층을 정확히 지정 | `--n-cpu-moe`와 같거나 VRAM을 약간 더 알뜰하게 씀 ([HF 오프로드 가이드](https://huggingface.co/blog/Doctor-Shotgun/llamacpp-moe-offload-guide)) | 매우 낮음 | 없음 | 옵션 삭제 |
 | 6 | NVIDIA 제어판에서 `llama-server.exe`만 "CUDA - Sysmem Fallback Policy = Prefer No Sysmem Fallback"으로 설정 | 속도는 그대로. VRAM이 넘칠 때 조용히 느려지는 대신 오류가 나서 원인을 바로 알 수 있음 ([runaihome](https://runaihome.com/blog/shared-gpu-memory-slow-local-ai-sysmem-fallback-fix-2026/)) | 낮음 | **있음**(드라이버의 프로그램별 설정. 직접 설정해야 함) | "전역 설정 사용"으로 되돌림 |
 | 7 | HAGS(하드웨어 가속 GPU 예약) 켜기/끄기 | llama.cpp에서 효과가 있다는 근거 없음 ([Tom's Hardware](https://www.tomshardware.com/news/gpu-hardware-scheduling-tested)) | 낮음, 재부팅 필요 | **있음** | 가능. **권장하지 않음** |
 | 8 | 전력 제한 상향, 오버클럭 | 대상 아님 | 중간 이상 | **있음** | **하지 말 것** |
 
-드라이버 설정 중 이 PC에 의미가 있는 것은 6번뿐이고, 이것도 속도를 올리지는 않는다. 지금처럼 35~37 tok/s가 꾸준히 나온다면 VRAM이 넘치고 있지 않다는 뜻이라 굳이 바꿀 필요가 없다. 1~5번을 시험하면서 VRAM 한계를 밀어붙일 때만 진단용으로 쓸 만하다. llama.cpp를 업데이트할 때 주의할 점도 하나 있다. **CUDA 13.2로 빌드한 파일은 IQ3_S 모델에서 엉뚱한 글자를 출력하는 버그가 있었고, 13.3에서 고쳐졌다** ([GitHub issue #21255](https://github.com/ggml-org/llama.cpp/issues/21255)). 지금 빌드는 CUDA 13.5라 해당하지 않지만, 나중에 업데이트할 때는 파일 이름에 적힌 CUDA 버전을 확인하는 것이 좋다.
+드라이버 설정 중 이 PC에 의미가 있는 것은 6번뿐이고, 이것도 속도를 올리지는 않는다. 지금처럼 35 - 37 tok/s가 꾸준히 나온다면 VRAM이 넘치고 있지 않다는 뜻이라 굳이 바꿀 필요가 없다. 1 - 5번을 시험하면서 VRAM 한계를 밀어붙일 때만 진단용으로 쓸 만하다. llama.cpp를 업데이트할 때 주의할 점도 하나 있다. **CUDA 13.2로 빌드한 파일은 IQ3_S 모델에서 엉뚱한 글자를 출력하는 버그가 있었고, 13.3에서 고쳐졌다** ([GitHub issue #21255](https://github.com/ggml-org/llama.cpp/issues/21255)). 지금 빌드는 CUDA 13.5라 해당하지 않지만, 나중에 업데이트할 때는 파일 이름에 적힌 CUDA 버전을 확인하는 것이 좋다.
 
 ## 결론
 

@@ -52,8 +52,12 @@ The full technical report (method, every measurement, limitations) is in **[REPO
 ## Running it yourself
 
 - llama.cpp (Windows CUDA build) for `llama-server`, and to build `src/hm_host.cpp` against `llama.h`
-- Python 3.11+, PyTorch with CUDA, `numpy`, `gguf`, `requests`
+- Python 3.11+, PyTorch with CUDA, then `pip install -r requirements.txt`
 - Paths come from environment variables: `MODEL`, `ENGINE`, `HM_DATA`, `EXAM_DATA`, `RESULTS`, `LAB`
+
+## Citation
+
+See [CITATION.cff](CITATION.cff) (GitHub shows a "Cite this repository" button).
 
 ## License
 

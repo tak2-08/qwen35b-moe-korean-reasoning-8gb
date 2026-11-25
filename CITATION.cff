@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Fine-tuning a 35B MoE (Qwen3.6-35B-A3B) for Korean step-by-step exam reasoning on an 8 GB GPU"
+authors:
+  - alias: tak2-08
+type: software
+license: CC-BY-NC-4.0
+repository-code: "https://github.com/tak2-08/qwen35b-moe-korean-reasoning-8gb"
+date-released: 2026-11-25
+keywords: [MoE, LoRA, llama.cpp, Korean, low-VRAM training, Gated DeltaNet]
