@@ -1,0 +1,23 @@
+Copyright (c) 2026 the authors of this repository
+
+This work (source code, documentation and reports in this repository) is licensed under the
+Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+
+You are free to:
+  - Share: copy and redistribute the material in any medium or format
+  - Adapt: remix, transform, and build upon the material
+Under the following terms:
+  - Attribution: you must give appropriate credit, provide a link to the license, and indicate if changes were made.
+  - NonCommercial: you may not use the material for commercial purposes.
+  - No additional restrictions: you may not apply legal terms or technological measures that legally restrict
+    others from doing anything the license permits.
+
+This is a human-readable summary. The full legal text is at:
+  https://creativecommons.org/licenses/by-nc/4.0/legalcode
+and that legal text is the license that applies.
+
+Third-party components keep their own licenses:
+  - The base model (Qwen3.6-35B-A3B) is distributed under its own license by its authors; this repository
+    does not contain or redistribute model weights.
+  - llama.cpp / ggml (used as the inference engine and linked by src/hm_host.cpp) is MIT-licensed
+    (https://github.com/ggml-org/llama.cpp).
