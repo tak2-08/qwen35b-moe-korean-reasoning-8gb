@@ -16,13 +16,14 @@ Measured on the newest exam year, which was never used for training.
 
 | | Base | My adapter |
 |---|---|---|
-| Step-by-step accuracy (120 items, ≤ 2000 tokens) | 52.5% | **63.3%** (paired p = 0.041) |
-| Average answer length | 1,388 tokens | **524 tokens** |
+| Step-by-step accuracy (220 items, ≤ 2000 tokens) | 53.2% | **63.6%** (paired p = 0.006) |
+| Average answer length | about 1,330 tokens | **about 540 tokens** |
+| Answers cut off at 2000 tokens | 30.5% | **5.0%** |
 | Direct answer, no reasoning (1,416 items) | **62.8%** | 60.5% |
 | Korean benchmark mix (KMMLU, HAE-RAE, CSAT Korean 2025, civil service; 925 items) | **62.7%** | 61.6% |
 | Same top-1 next token as the base model on held-out Wikipedia text | 100% | 92.4% |
 
-In one line: **more right answers in a third of the length.** It isn't free. Direct answers got a little worse, and general knowledge dropped about 1 point. So my chat app turns the adapter on only for multiple-choice exam questions.
+In one line: **more right answers in less than half the length.** It isn't free. Direct answers got a little worse, and general knowledge dropped about 1 point. So my chat app turns the adapter on only for multiple-choice exam questions.
 
 ## How it fits in 8 GB
 

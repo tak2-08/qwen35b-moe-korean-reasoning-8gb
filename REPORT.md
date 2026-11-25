@@ -37,9 +37,10 @@ Results on the held-out exam year:
 
 | | Base | Stage-1 adapter (c1a) | **Adopted c2** |
 |---|---|---|---|
-| Step-by-step, 120 items, ≤2000 tokens (accuracy) | 52.5% | 52.5% | **63.3%** (p = 0.041 vs base, paired) |
-| Average answer length (tokens) | 1,388 | 371 | 524 |
-| Answers cut off at 2000 tokens | 32.5% | 5.8% | 4.2% |
+| Step-by-step, 220 items, ≤2000 tokens (accuracy) | 53.2% | — | **63.6%** (p = 0.006 vs base, paired) |
+| Step-by-step, first 120 items (development set) | 52.5% | 52.5% | **63.3%** (p = 0.041) |
+| Average answer length (tokens; 220 / 120 / 300 items) | ~1,330 | 371 | ~540 |
+| Answers cut off at 2000 tokens (220 items; c1a: 120) | 30.5% | 5.8% | 5.0% |
 | Direct answer (no reasoning), 1,416 items | **62.8%** | 57.4% | 60.5% |
 | Korean benchmark mix, 925 items | **62.7%** | 61.3% | 61.6% |
 | Background next-token agreement (gate ≥ 92%) | 100% | 93.2% | 92.4% |
@@ -48,11 +49,12 @@ Adopted c2 = the checkpoint after 3 of 5 chunks, used with frequency/presence pe
 fell to 91.3% agreement and was rejected by the gate.
 
 Honest reading:
-- The adapter makes step-by-step answers more accurate and much shorter: 2.6× fewer tokens than the base model
+- The adapter makes step-by-step answers more accurate and much shorter: about 2.4× fewer tokens than the base model
   under the same 2000-token limit.
 - It slightly lowers accuracy when the model must answer immediately without reasoning. The app therefore
   enables it only for multiple-choice exam questions.
-- The step-by-step gain is measured on 120 items. It is statistically significant, but only just.
+- The step-by-step gain was first found on 120 items (p = 0.041), then confirmed on 100 more items:
+  220 items in total, p = 0.006. On all 300 held-out items the adopted model scores 63.7%.
 
 ---
 
@@ -70,8 +72,8 @@ Honest reading:
   - 그래서 추론 엔진(llama.cpp)으로 전문가(expert) 출력을 기록해 두고, 나머지 부분만 PyTorch로 다시 구현했습니다.
   - 이렇게 해서 정확한 기울기로 학습했습니다.
 - **결과**: 학습에 한 번도 쓰지 않은 최신 연도 시험 문항에서 측정했습니다.
-  - 단계별 풀이 정답률: 52.5% → **63.3%**
-  - 풀이 길이: 평균 1,388토큰 → 524토큰 (2.6배 짧아짐)
+  - 단계별 풀이 정답률(같은 220문항): 53.2% → **63.6%** (p = 0.006)
+  - 풀이 길이: 평균 약 1,330토큰 → 약 540토큰 (약 2.4배 짧아짐)
   - 일반 문장에 대한 원래 모델과의 일치도: 92.4% (기준 92% 통과)
 - **한계**: 풀이 없이 바로 답을 고르는 정답률은 기본 모델보다 2.3%p 낮습니다. 그래서 실제 앱에서는 객관식 시험 문제에만 이 어댑터를 켭니다.
 
@@ -196,6 +198,17 @@ Honest reading:
 - 채택 모델 대 c1a: p = 0.035
 - 유의하지만 표본이 작아서, 오차 범위는 대략 ±8%p입니다.
 
+**추가 검증 (220문항)**: 위 비교로 설정을 고른 뒤, 뒤쪽 100문항(121~220번)을 기본 모델과 채택 모델로 새로 풀려 합쳤습니다.
+
+| 모델 | 정확도 (220문항) | 2,000토큰에서 잘림 | 평균 길이 |
+|---|---|---|---|
+| 기본 모델 | 53.2% (117/220) | 30.5% | 약 1,330토큰 |
+| **채택 c2** | **63.6% (140/220)** | **5.0%** | 약 540토큰 (300문항 평균 544) |
+
+- McNemar 정확 검정: 채택 모델만 맞힌 문항 44개, 기본 모델만 맞힌 문항 21개, **p = 0.006**
+- 새로 푼 100문항만 보면 기본 54.0%, 채택 64.0%로, 앞 120문항과 같은 방향·비슷한 크기의 차이가 다시 나왔습니다.
+- 채택 모델은 보류 문항 300개 전체에서 63.7%(평균 544토큰)입니다.
+
 **참고: 기본 모델에 생각 모드를 켠 경우**
 - 앞쪽 60문항, 생각 예산 3,000토큰입니다.
 - 정확도 48.3%, 평균 2,970토큰입니다.
@@ -278,16 +291,16 @@ Honest reading:
 - greedy(결정적) 디코딩에서는 ①을 답합니다.
 - 결론: 이 문항에서 반복 없이 끝맺게 됐지만, 문제 자체는 아직 풀지 못합니다.
 
-**전체 평가의 편향 점검**: 모든 단계별 풀이 평가가 같은 형식 예시를 쓰기 때문에, 120문항 전체에서 ③을 지나치게 고르는지 확인했습니다.
+**전체 평가의 편향 점검**: 모든 단계별 풀이 평가가 같은 형식 예시를 쓰기 때문에, ③을 지나치게 고르는지 확인했습니다. (220문항 결과, 괄호 안은 처음 120문항)
 
-| 모델 | ③을 고른 횟수 (실제 정답 ③: 30) | 정답이 ③인 문항 정확도 | 정답이 ③이 아닌 문항 정확도 |
+| 모델 | ③을 고른 횟수 (실제 정답 ③: 51 (30)) | 정답이 ③인 문항 정확도 | 정답이 ③이 아닌 문항 정확도 |
 |---|---|---|---|
-| 기본 모델 | 41 | 70.0% | 46.7% |
-| c1a | 30 | 56.7% | 51.1% |
-| 채택 c2 | 31 | 66.7% | **62.2%** |
+| 기본 모델 | 78 (41) | 74.5% (70.0%) | 46.7% (46.7%) |
+| c1a | — (30) | — (56.7%) | — (51.1%) |
+| 채택 c2 | 57 (31) | 74.5% (66.7%) | **60.4% (62.2%)** |
 
 - 기본 모델은 ③ 쪽으로 쏠려 있어서 점수가 다소 부풀려져 있습니다.
-- 채택 모델은 이런 쏠림이 없습니다. 정답이 ③이 아닌 문항만 보면 기본 모델과의 차이가 10.8%p에서 15.5%p로 더 커집니다.
+- 채택 모델은 이런 쏠림이 없습니다. 정답이 ③이 아닌 문항만 보면 기본 모델과의 차이가 10.5%p에서 13.7%p로 더 커집니다(220문항 기준).
 - "공식 정답"이나 "주어진 정답"을 언급한 문장은 채택 모델의 120개 답 중 1개에만 나왔고, 그 답은 틀렸습니다.
 
 
@@ -310,7 +323,7 @@ llama-server -m Qwen3.6-35B-A3B-UD-IQ3_S.gguf --lora exam_adapter.gguf \
 
 ## 6. 한계
 
-- **표본 크기**: 단계별 풀이 비교는 120문항입니다. 유의 수준은 p ≈ 0.04로, 겨우 넘는 정도입니다.
+- **표본 크기**: 단계별 풀이 비교는 220문항(p = 0.006)입니다. 설정은 앞 120문항으로 골랐고, 뒤 100문항은 확인용으로 새로 풀었습니다. 정확도 차이의 오차 범위는 대략 ±6%p입니다.
 - **즉답 정확도 하락**: 바로 답하기에서는 기본 모델보다 낮습니다(62.8% 대 60.5%).
 - **보존 지표의 범위**: "일반 문장 보존"은 위키백과 문장의 다음 토큰 일치도입니다. 대화 품질 전체를 직접 잰 것은 아닙니다.
 - **과목 편차**: 수학(30%)과 과학탐구(38%)는 여전히 낮습니다. 그림이 필요한 문항은 평가에서 뺐습니다.
